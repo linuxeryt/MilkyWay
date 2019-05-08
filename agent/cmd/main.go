@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"milkyway/job"
+	"milkyway/agent/job"
 	"sync"
 )
 
@@ -13,7 +13,6 @@ func main() {
 	taskCtx, _ := context.WithCancel(context.Background())
 	wg.Add(1)
 	go job.StartJobProcess(taskCtx, "devops") // start job process
-
 
 	wg.Wait()
 }

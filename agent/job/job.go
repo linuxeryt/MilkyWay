@@ -4,7 +4,10 @@ import (
 	"context"
 	"go.etcd.io/etcd/clientv3"
 	"log"
+	"milkyway/agent/job/register"
 	"time"
+
+	_ "milkyway/agent/job/module/all"		// 导入all包，用于启动注册job模块流程
 )
 
 var (
@@ -22,6 +25,9 @@ func startWatchJobKey(jobKey string) chan []byte {
 	if err != nil {
 		log.Println(err)
 	}
+
+	// register.ModuleMapOfJob["cmd"].Run("fd")
+
 
 	rch := cli.Watch(context.Background(), jobKey)
 	jobChan := make(chan []byte)
@@ -53,7 +59,17 @@ func StartJobProcess(ctx context.Context, agentID string) {
 		select {
 		case task := <-jobChan:
 			log.Printf("Received job: %s\n", string(task))
+
+			// 调用job模块
+			jobModule, ok := register.ModuleMapOfJob[string(task)]
+			if ok {
+				jobModule.Run("fdf")
+			} else {
+				log.Printf("Job module <%s> not found\n", string(task))
+			}
 		case <-ctx.Done():
+			log.Println("Job Process received exit signal.")
+			log.Println("Job Process Exit.")
 			return
 		}
 	}
