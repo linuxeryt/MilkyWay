@@ -7,7 +7,7 @@ import (
 	"milkyway/agent/job/register"
 	"time"
 
-	_ "milkyway/agent/job/module/all"		// 导入all包，用于启动注册job模块流程
+	_ "milkyway/agent/job/module/all"		// 导入all包，会自动调用所有job模块init()，实现job注册
 )
 
 var (
@@ -25,9 +25,6 @@ func startWatchJobKey(jobKey string) chan []byte {
 	if err != nil {
 		log.Println(err)
 	}
-
-	// register.ModuleMapOfJob["cmd"].Run("fd")
-
 
 	rch := cli.Watch(context.Background(), jobKey)
 	jobChan := make(chan []byte)
@@ -63,7 +60,11 @@ func StartJobProcess(ctx context.Context, agentID string) {
 			// 调用job模块
 			jobModule, ok := register.ModuleMapOfJob[string(task)]
 			if ok {
-				jobModule.Run("fdf")
+				param := map[string]interface{}{
+					"path": "ls",
+					"args": []string{"-l"},
+				}
+				jobModule.Run(param)
 			} else {
 				log.Printf("Job module <%s> not found\n", string(task))
 			}
