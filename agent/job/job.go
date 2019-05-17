@@ -2,6 +2,7 @@ package job
 
 import (
 	"context"
+	"encoding/json"
 	"go.etcd.io/etcd/clientv3"
 	"log"
 	"milkyway/agent/job/register"
@@ -13,6 +14,38 @@ import (
 var (
 	jobPrefix = "/milkyway/agent/job/"
 )
+
+type JobInfo struct {
+	ModuleName	string					`json:"moduleName"`
+	JobID		string					`json:"jobID"`
+	Param 		map[string]interface{}	`json:"param"`
+}
+
+
+func StartJobProcess(ctx context.Context, agentID string) {
+	log.Println("Start Job Process")
+
+	jobKey := jobPrefix + agentID
+	jobChan := startWatchJobKey(jobKey)
+	resultChan := watchResultChan()
+
+	loop(jobChan, resultChan, ctx)
+}
+
+
+func watchResultChan() chan map[string]interface{} {
+	resultChan := make(chan map[string]interface{})
+
+	go func() {
+		select {
+		case result := <-resultChan:
+			log.Println(result)
+		}
+	}()
+
+	return resultChan
+}
+
 
 // start watch job key
 func startWatchJobKey(jobKey string) chan []byte {
@@ -36,7 +69,7 @@ func startWatchJobKey(jobKey string) chan []byte {
 
 		for wresp := range rch {
 			for _, ev := range wresp.Events {
-				log.Printf("%s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+				// log.Printf("%s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
 				jobChan <- ev.Kv.Value
 			}
 		}
@@ -45,33 +78,41 @@ func startWatchJobKey(jobKey string) chan []byte {
 	return jobChan
 }
 
-func StartJobProcess(ctx context.Context, agentID string) {
-	log.Println("Start Job Process")
 
-	jobKey := jobPrefix + agentID
-	jobChan := startWatchJobKey(jobKey)
-
+func loop(jobChan chan []byte, resultChan chan map[string]interface{},ctx context.Context) {
 	// loop fetch job from jobChan
 	for {
 		select {
-		case task := <-jobChan:
-			log.Printf("Received job: %s\n", string(task))
-
-			// 调用job模块
-			jobModule, ok := register.ModuleMapOfJob[string(task)]
-			if ok {
-				param := map[string]interface{}{
-					"path": "ls",
-					"args": []string{"-l"},
-				}
-				jobModule.Run(param)
-			} else {
-				log.Printf("Job module <%s> not found\n", string(task))
-			}
+		case _job := <-jobChan: // {"moduleName": string, "param": map[string]{}interface}
+			log.Printf("Received job: %s\n", string(_job))
+			go callJobModule(_job, resultChan)
 		case <-ctx.Done():
 			log.Println("Job Process received exit signal.")
 			log.Println("Job Process Exit.")
 			return
 		}
+	}
+}
+
+
+func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
+	var jobInfo JobInfo
+	err := json.Unmarshal(_job, &jobInfo)
+	if err != nil {
+		log.Printf("Job Info Unmarshal error: %s\n",err)
+		return
+	}
+
+	moduleName := jobInfo.ModuleName
+	param := jobInfo.Param
+	jobId := jobInfo.JobID
+
+	log.Printf("param type: %T\n", param)
+
+	jobModule, ok := register.ModuleMapOfJob[moduleName]
+	if ok {
+		jobModule.Run(jobId, param, resultChan)
+	} else {
+		log.Printf("Job module <%s> not found.\n", moduleName)
 	}
 }
