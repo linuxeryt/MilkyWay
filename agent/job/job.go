@@ -108,7 +108,7 @@ func loop(jobChan chan []byte, resultChan chan map[string]interface{},ctx contex
 	// loop fetch job from jobChan
 	for {
 		select {
-		case _job := <-jobChan: // {"moduleName": string, "param": map[string]{}interface}
+		case _job := <-jobChan: // {"moduleName": string, "jobID": string, "param": map[string]{}interface}
 			log.Printf("[Job]  Received job with data: %s\n", string(_job))
 			go callJobModule(_job, resultChan)
 		case <-ctx.Done():
@@ -135,12 +135,9 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 	jobModule, ok := register.ModuleMapOfJob[moduleName]
 	if ok {
 		jobModule.Run(jobId, param, resultChan)
+		result := jobModule.Return()
+		resultChan <- result
 	} else {
 		log.Printf("[Job] JobID: %s; Job module <%s> not found.\n", jobId, moduleName)
 	}
-}
-
-
-func WriteResult() {
-
 }

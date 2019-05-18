@@ -56,17 +56,17 @@ func (cmd *Cmd) Run(jobID string, param map[string]interface{}, resultChan chan 
 	}
 
 	cmd.runCmd(path, args)
-	cmd.Return(resultChan)
 }
 
-func (cmd *Cmd) Return(resultChan chan map[string]interface{}) {
+func (cmd *Cmd) Return() map[string]interface{} {
 	res := map[string]interface{}{
 		"JobID": cmd.JobID,
 		"Status": cmd.Status,
 		"Result": cmd.Result,
 	}
+
 	log.Printf("[Job]  JobID: %s; Result: %s\n", cmd.JobID, cmd.Result)
-	resultChan <- res
+	return res
 }
 
 func init() {
