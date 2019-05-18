@@ -139,8 +139,6 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 		result := jobModule.Return()
 		resultChan <- result
 	} else {
-		log.Printf("[Job] JobID: %s; Job module <%s> not found.\n", jobId, moduleName)
-
 		_result := new(bytes.Buffer)
 		fmt.Fprintf(_result,"[Job] JobID: %s; Job module '%s' not found.", jobId, moduleName)
 		result := map[string]interface{}{
