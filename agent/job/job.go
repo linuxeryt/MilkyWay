@@ -58,15 +58,18 @@ func watchResultChan(ctx context.Context) chan map[string]interface{} {
 	}
 
 	go func() {
-		select {
-		case result := <-resultChan:
-			jobID := result["JobID"].(string)
+		for {
+			select {
+			case result := <-resultChan:
+				jobID := result["JobID"].(string)
 
-			// 根据jobID构造结果返回的key
-			key := "/milkyway/server/job/" + jobID
-			v, _ := json.Marshal(result)
-			cli.Put(ctx, key, string(v))
+				// 根据jobID构造结果返回的key
+				key := "/milkyway/server/job/" + jobID
+				v, _ := json.Marshal(result)
+				cli.Put(ctx, key, string(v))
+			}
 		}
+
 	}()
 
 	return resultChan
@@ -91,7 +94,7 @@ func startWatchJobKey(jobKey string) chan []byte {
 	go func() {
 		defer cli.Close()
 
-		log.Printf("Job Process watching job key %s\n", jobKey)
+		log.Printf("[job]  Job Process watching job key %s\n", jobKey)
 
 		for wresp := range rch {
 			for _, ev := range wresp.Events {
@@ -146,6 +149,9 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 			"Status": false,
 			"Result": _result.String(),
 		}
+
+		log.Printf("[Job] JobID: %s; Result: %s\n", jobId, _result)
+
 		resultChan <- result
 
 	}
