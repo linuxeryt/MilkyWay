@@ -4,7 +4,6 @@
     <list default="true" id="d8904163-206f-4dc7-a14b-c71e2d4e9598" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/agent/job/job.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent/job/job.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agent/job/module/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent/job/module/cmd/cmd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/agent/jobInterface.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent/jobInterface.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,12 +34,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="11169" />
+          <entry key="go" value="11172" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="11169" />
+          <entry key="Go" value="11172" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.go.postfix.template.usages.trigger">
@@ -62,11 +61,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/agent/job/module/cmd/cmd.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="346">
-              <caret line="38" column="1" lean-forward="true" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="1" />
+            <state relative-caret-position="129">
+              <caret line="29" column="28" lean-forward="true" selection-start-line="29" selection-start-column="28" selection-end-line="29" selection-end-column="28" />
               <folding>
                 <element signature="e#13#105#0" expanded="true" />
               </folding>
@@ -83,11 +82,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agent/job/job.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+            <state relative-caret-position="214">
+              <caret line="18" selection-start-line="18" selection-end-line="18" />
               <folding>
                 <element signature="e#13#199#0" expanded="true" />
               </folding>
@@ -366,22 +365,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/agent/job/module/cmd/cmd.go">
+    <entry file="file://$PROJECT_DIR$/agent/job/job.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="38" column="1" lean-forward="true" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="1" />
+        <state relative-caret-position="214">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
           <folding>
-            <element signature="e#13#105#0" expanded="true" />
+            <element signature="e#13#199#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/agent/job/job.go">
+    <entry file="file://$PROJECT_DIR$/agent/job/module/cmd/cmd.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+        <state relative-caret-position="129">
+          <caret line="29" column="28" lean-forward="true" selection-start-line="29" selection-start-column="28" selection-end-line="29" selection-end-column="28" />
           <folding>
-            <element signature="e#13#199#0" expanded="true" />
+            <element signature="e#13#105#0" expanded="true" />
           </folding>
         </state>
       </provider>

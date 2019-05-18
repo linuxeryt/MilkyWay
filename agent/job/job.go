@@ -17,7 +17,6 @@ var (
 )
 
 
-
 type JobInfo struct {
 	ModuleName	string					`json:"moduleName"`
 	JobID		string					`json:"jobID"`

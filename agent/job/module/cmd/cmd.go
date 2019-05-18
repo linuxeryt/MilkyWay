@@ -27,7 +27,7 @@ func (cmd *Cmd) runCmd(path string, args []string) {
 	err := command.Run()
 	if err != nil {
 		log.Println("error: ", err)
-		result = errstd.String()
+		result = err.Error()
 		status = false
 	} else {
 		result = out.String()
