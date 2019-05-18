@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"milkyway/agent/job/register"
@@ -45,11 +44,12 @@ func (cmd *Cmd) Run(jobID string, param map[string]interface{}, resultChan chan 
 
 	cmd.JobID = jobID
 
-	log.Printf("Call cmd module, params: %s.\n", param)
+	log.Printf("[job]  JobID: %s; cmd module running.\n", jobID)
 
 	path := param["path"].(string)
 	_args := param["args"].([]interface{})
 
+	// 将[]interface{}中的转储入[]string中
 	args := make([]string, len(_args))
 	for index, value := range _args {
 		args[index] = fmt.Sprint(value)
@@ -60,20 +60,12 @@ func (cmd *Cmd) Run(jobID string, param map[string]interface{}, resultChan chan 
 }
 
 func (cmd *Cmd) Return(resultChan chan map[string]interface{}) {
-
-	b, err := json.Marshal(cmd)
-	if err != nil {
-		log.Println("err: ", err.Error())
-	} else {
-		log.Println(b)
-	}
-
 	res := map[string]interface{}{
 		"JobID": cmd.JobID,
 		"Status": cmd.Status,
 		"Result": cmd.Result,
 	}
-
+	log.Printf("[Job]  JobID: %s; Result: %s\n", cmd.JobID, cmd.Result)
 	resultChan <- res
 }
 
