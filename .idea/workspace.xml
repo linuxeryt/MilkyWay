@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d8904163-206f-4dc7-a14b-c71e2d4e9598" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/agent/job/module/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent/job/module/cmd/cmd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent/job/job.go" beforeDir="false" afterPath="$PROJECT_DIR$/agent/job/job.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,12 +33,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="11173" />
+          <entry key="go" value="11366" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="11173" />
+          <entry key="Go" value="11366" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.go.postfix.template.usages.trigger">
@@ -60,11 +60,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agent/job/module/cmd/cmd.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="22" column="42" lean-forward="true" selection-start-line="22" selection-start-column="42" selection-end-line="22" selection-end-column="42" />
+            <state relative-caret-position="340">
+              <caret line="72" column="1" lean-forward="true" selection-start-line="72" selection-start-column="1" selection-end-line="72" selection-end-column="1" />
               <folding>
                 <element signature="e#13#105#0" expanded="true" />
               </folding>
@@ -81,11 +81,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/agent/job/job.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="18" selection-start-line="18" selection-end-line="18" />
+            <state relative-caret-position="339">
+              <caret line="148" column="39" lean-forward="true" selection-start-line="148" selection-start-column="39" selection-end-line="148" selection-end-column="39" />
               <folding>
                 <element signature="e#13#199#0" expanded="true" />
               </folding>
@@ -146,8 +146,8 @@
         <option value="$PROJECT_DIR$/agent/job/module/all/all.go" />
         <option value="$PROJECT_DIR$/agent/cmd/main.go" />
         <option value="$PROJECT_DIR$/agent/jobInterface.go" />
-        <option value="$PROJECT_DIR$/agent/job/job.go" />
         <option value="$PROJECT_DIR$/agent/job/module/cmd/cmd.go" />
+        <option value="$PROJECT_DIR$/agent/job/job.go" />
       </list>
     </option>
   </component>
@@ -364,22 +364,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/agent/job/job.go">
+    <entry file="file://$PROJECT_DIR$/agent/job/module/cmd/cmd.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        <state relative-caret-position="340">
+          <caret line="72" column="1" lean-forward="true" selection-start-line="72" selection-start-column="1" selection-end-line="72" selection-end-column="1" />
           <folding>
-            <element signature="e#13#199#0" expanded="true" />
+            <element signature="e#13#105#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/agent/job/module/cmd/cmd.go">
+    <entry file="file://$PROJECT_DIR$/agent/job/job.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="22" column="42" lean-forward="true" selection-start-line="22" selection-start-column="42" selection-end-line="22" selection-end-column="42" />
+        <state relative-caret-position="339">
+          <caret line="148" column="39" lean-forward="true" selection-start-line="148" selection-start-column="39" selection-end-line="148" selection-end-column="39" />
           <folding>
-            <element signature="e#13#105#0" expanded="true" />
+            <element signature="e#13#199#0" expanded="true" />
           </folding>
         </state>
       </provider>

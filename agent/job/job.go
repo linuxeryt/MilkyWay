@@ -1,8 +1,10 @@
 package job
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"go.etcd.io/etcd/clientv3"
 	"log"
 	"milkyway/agent/job/register"
@@ -138,5 +140,15 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 		resultChan <- result
 	} else {
 		log.Printf("[Job] JobID: %s; Job module <%s> not found.\n", jobId, moduleName)
+
+		_result := new(bytes.Buffer)
+		fmt.Fprintf(_result,"[Job] JobID: %s; Job module '%s' not found.", jobId, moduleName)
+		result := map[string]interface{}{
+			"JobID": jobId,
+			"Status": false,
+			"Result": _result.String(),
+		}
+		resultChan <- result
+
 	}
 }
