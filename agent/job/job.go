@@ -26,7 +26,15 @@ func StartJobProcess(ctx context.Context, agentID string) {
 	log.Println("Start Job Process")
 
 	jobKey := jobPrefix + agentID
+
+	// jobChan
+	// loop从该通道接收任务
+	// 监听jobKey的gouroutine发送任务至该通道
 	jobChan := startWatchJobKey(jobKey)
+
+	// resultChan
+	// job模块的运行结果将发送到该通道
+	// 监听该通道的goroutine将结果发送至etcd集群
 	resultChan := watchResultChan()
 
 	loop(jobChan, resultChan, ctx)
@@ -115,4 +123,9 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 	} else {
 		log.Printf("Job module <%s> not found.\n", moduleName)
 	}
+}
+
+
+func WriteResult() {
+
 }
