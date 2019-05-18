@@ -11,9 +11,12 @@ import (
 	_ "milkyway/agent/job/module/all"		// 导入all包，会自动调用所有job模块init()，实现job注册
 )
 
+
 var (
 	jobPrefix = "/milkyway/agent/job/"
 )
+
+
 
 type JobInfo struct {
 	ModuleName	string					`json:"moduleName"`
@@ -23,7 +26,7 @@ type JobInfo struct {
 
 
 func StartJobProcess(ctx context.Context, agentID string) {
-	log.Println("Start Job Process")
+	log.Println("[job]  Start Job Process.")
 
 	jobKey := jobPrefix + agentID
 
@@ -35,19 +38,33 @@ func StartJobProcess(ctx context.Context, agentID string) {
 	// resultChan
 	// job模块的运行结果将发送到该通道
 	// 监听该通道的goroutine将结果发送至etcd集群
-	resultChan := watchResultChan()
+	resultChan := watchResultChan(ctx)
 
 	loop(jobChan, resultChan, ctx)
 }
 
 
-func watchResultChan() chan map[string]interface{} {
+func watchResultChan(ctx context.Context) chan map[string]interface{} {
 	resultChan := make(chan map[string]interface{})
+
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"localhost:2379", "localhost:22379"},
+		DialTimeout: 5 * time.Second,
+	})
+
+	if err != nil {
+		log.Println(err)
+	}
 
 	go func() {
 		select {
 		case result := <-resultChan:
-			log.Println(result)
+			jobID := result["JobID"].(string)
+
+			// 根据jobID构造结果返回的key
+			key := "/milkyway/server/job/" + jobID
+			v, _ := json.Marshal(result)
+			cli.Put(ctx, key, string(v))
 		}
 	}()
 
@@ -92,11 +109,11 @@ func loop(jobChan chan []byte, resultChan chan map[string]interface{},ctx contex
 	for {
 		select {
 		case _job := <-jobChan: // {"moduleName": string, "param": map[string]{}interface}
-			log.Printf("Received job: %s\n", string(_job))
+			log.Printf("[Job]  Received job with data: %s\n", string(_job))
 			go callJobModule(_job, resultChan)
 		case <-ctx.Done():
-			log.Println("Job Process received exit signal.")
-			log.Println("Job Process Exit.")
+			log.Println("[Job]  Job Process received exit signal.")
+			log.Println("[Job]  Job Process Exit.")
 			return
 		}
 	}
@@ -107,7 +124,7 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 	var jobInfo JobInfo
 	err := json.Unmarshal(_job, &jobInfo)
 	if err != nil {
-		log.Printf("Job Info Unmarshal error: %s\n",err)
+		log.Printf("[Job]  Job Info Unmarshal error: %s\n",err)
 		return
 	}
 
@@ -115,13 +132,11 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 	param := jobInfo.Param
 	jobId := jobInfo.JobID
 
-	log.Printf("param type: %T\n", param)
-
 	jobModule, ok := register.ModuleMapOfJob[moduleName]
 	if ok {
 		jobModule.Run(jobId, param, resultChan)
 	} else {
-		log.Printf("Job module <%s> not found.\n", moduleName)
+		log.Printf("[Job] JobID: %s; Job module <%s> not found.\n", jobId, moduleName)
 	}
 }
 
