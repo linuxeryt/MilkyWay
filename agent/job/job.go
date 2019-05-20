@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"go.etcd.io/etcd/clientv3"
 	"log"
+	"milkyway/agent/config"
 	"milkyway/agent/job/register"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 
 var (
 	jobPrefix = "/milkyway/agent/job/"
+	agentConfig = new(config.GlobalConfig)
 )
 
 type JobInfo struct {
@@ -23,9 +25,11 @@ type JobInfo struct {
 	Param      map[string]interface{} `json:"param"`
 }
 
-func StartJobProcess(ctx context.Context, agentID string) {
+func StartJobProcess(ctx context.Context, agentID string, config *config.GlobalConfig) {
 	log.Println("[job]  Start Job Process.")
+	log.Printf("[job] Job received AgentConfig: %s\n", *config)
 
+	agentConfig = config
 	jobKey := jobPrefix + agentID
 
 	// jobChan

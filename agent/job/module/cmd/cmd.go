@@ -14,6 +14,7 @@ type Cmd struct {
 	Result string
 }
 
+
 func (cmd *Cmd) runCmd(path string, args []string) {
 	var out bytes.Buffer
 	var errstd bytes.Buffer
