@@ -35,17 +35,20 @@ func StartJobProcess(ctx context.Context, agentID string, config *config.GlobalC
 	// jobChan
 	// loop从该通道接收任务
 	// 监听jobKey的gouroutine发送任务至该通道
-	jobChan := startWatchJobKey(jobKey)
+	jobChan := startWatchJobProcess(jobKey, ctx)
 
 	// resultChan
 	// job模块的运行结果将发送到该通道
 	// 监听该通道的goroutine将结果发送至etcd集群
-	resultChan := watchResultChan(ctx)
+	resultChan := startSendResultProcess(ctx)
 
 	loop(jobChan, resultChan, ctx)
 }
 
-func watchResultChan(ctx context.Context) chan map[string]interface{} {
+
+// 启动 SendResult 进程
+// 监听 resultChan 并 将结果发送至etcd集群
+func startSendResultProcess(ctx context.Context) chan map[string]interface{} {
 	resultChan := make(chan map[string]interface{})
 
 	cli, err := clientv3.New(clientv3.Config{
@@ -67,16 +70,21 @@ func watchResultChan(ctx context.Context) chan map[string]interface{} {
 				key := "/milkyway/server/job/" + jobID
 				v, _ := json.Marshal(result)
 				cli.Put(ctx, key, string(v))
+			case <-ctx.Done():
+				log.Println("[job]  SendResult process received exit signal.")
+				log.Println("[job]  SendResult process exit.")
+				return
 			}
 		}
 
 	}()
-
 	return resultChan
 }
 
-// start watch job key
-func startWatchJobKey(jobKey string) chan []byte {
+// start WatchJob process to watch job key
+// 启动 WatchJob 子进程
+// 用于从etcd集群接收job任务并将任务发送至 jobChan
+func startWatchJobProcess(jobKey string, ctx context.Context) chan []byte {
 
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:    agentConfig.EtcdEndPoints,
@@ -87,18 +95,24 @@ func startWatchJobKey(jobKey string) chan []byte {
 		log.Println(err)
 	}
 
-	rch := cli.Watch(context.Background(), jobKey)
+	rch := cli.Watch(ctx, jobKey)
 	jobChan := make(chan []byte)
 
 	go func() {
 		defer cli.Close()
 
-		log.Printf("[job]  Job Process watching job key %s\n", jobKey)
-
-		for wresp := range rch {
-			for _, ev := range wresp.Events {
-				// log.Printf("%s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
-				jobChan <- ev.Kv.Value
+		log.Printf("[job]  WatchJob process watching job key %s\n", jobKey)
+		for {
+			select {
+			case wresp := <-rch:
+				for _, ev := range wresp.Events {
+					log.Printf("%s %q : %q\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+					jobChan <- ev.Kv.Value
+				}
+			case <-ctx.Done():
+				log.Println("[job]  WatchJob process received exit signal.")
+				log.Println("[job]  WatchJob process exit.")
+				return
 			}
 		}
 	}()
@@ -106,7 +120,9 @@ func startWatchJobKey(jobKey string) chan []byte {
 	return jobChan
 }
 
+
 func loop(jobChan chan []byte, resultChan chan map[string]interface{}, ctx context.Context) {
+
 	// loop fetch job from jobChan
 	for {
 		select {
@@ -114,12 +130,13 @@ func loop(jobChan chan []byte, resultChan chan map[string]interface{}, ctx conte
 			log.Printf("[Job]  Received job with data: %s\n", string(_job))
 			go callJobModule(_job, resultChan)
 		case <-ctx.Done():
-			log.Println("[Job]  Job Process received exit signal.")
-			log.Println("[Job]  Job Process Exit.")
+			log.Println("[Job]  job main process received exit signal.")
+			log.Println("[Job]  job main process exit.")
 			return
 		}
 	}
 }
+
 
 func callJobModule(_job []byte, resultChan chan map[string]interface{}) {
 	var jobInfo JobInfo

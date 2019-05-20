@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"milkyway/agent/config"
 	"milkyway/agent/job"
@@ -52,9 +53,9 @@ func main() {
 	var wg sync.WaitGroup
 
 	// start job process
-	taskCtx, _ := context.WithCancel(context.Background())
+	jobCtx, jobCancel := context.WithCancel(context.Background())
 	wg.Add(1)
-	go job.StartJobProcess(taskCtx, "devops", AgentConfig)
+	go job.StartJobProcess(jobCtx, "devops", AgentConfig)
 
 	// start data collect process
 	// wg.Add(1)
@@ -64,5 +65,9 @@ func main() {
 	//wg.Add(1)
 	//go
 
+	//time.Sleep(time.Duration(10 * time.Second))
+	//jobCancel()
+
 	wg.Wait()
+	fmt.Println("over")
 }
