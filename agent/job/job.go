@@ -49,7 +49,7 @@ func watchResultChan(ctx context.Context) chan map[string]interface{} {
 	resultChan := make(chan map[string]interface{})
 
 	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   []string{"localhost:2379", "localhost:22379"},
+		Endpoints:   agentConfig.EtcdEndPoints,
 		DialTimeout: 5 * time.Second,
 	})
 
@@ -79,7 +79,7 @@ func watchResultChan(ctx context.Context) chan map[string]interface{} {
 func startWatchJobKey(jobKey string) chan []byte {
 
 	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   []string{"localhost:2379", "localhost:22379"},
+		Endpoints:    agentConfig.EtcdEndPoints,
 		DialTimeout: 5 * time.Second,
 	})
 
