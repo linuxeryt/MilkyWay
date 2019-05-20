@@ -8,10 +8,10 @@ import (
 	"os/exec"
 )
 
-type Cmd struct{
-	JobID	string
-	Status	bool
-	Result	string
+type Cmd struct {
+	JobID  string
+	Status bool
+	Result string
 }
 
 func (cmd *Cmd) runCmd(path string, args []string) {
@@ -37,7 +37,6 @@ func (cmd *Cmd) runCmd(path string, args []string) {
 	cmd.Status = status
 }
 
-
 // param: {"path": string, "args": []interface{}}
 func (cmd *Cmd) Run(jobID string, param map[string]interface{}, resultChan chan map[string]interface{}) {
 
@@ -59,7 +58,7 @@ func (cmd *Cmd) Run(jobID string, param map[string]interface{}, resultChan chan 
 
 func (cmd *Cmd) Return() map[string]interface{} {
 	res := map[string]interface{}{
-		"JobID": cmd.JobID,
+		"JobID":  cmd.JobID,
 		"Status": cmd.Status,
 		"Result": cmd.Result,
 	}

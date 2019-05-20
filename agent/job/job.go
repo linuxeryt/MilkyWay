@@ -10,21 +10,18 @@ import (
 	"milkyway/agent/job/register"
 	"time"
 
-	_ "milkyway/agent/job/module/all"		// 导入all包，会自动调用所有job模块init()，实现job注册
+	_ "milkyway/agent/job/module/all" // 导入all包，会自动调用所有job模块init()，实现job注册
 )
-
 
 var (
 	jobPrefix = "/milkyway/agent/job/"
 )
 
-
 type JobInfo struct {
-	ModuleName	string					`json:"moduleName"`
-	JobID		string					`json:"jobID"`
-	Param 		map[string]interface{}	`json:"param"`
+	ModuleName string                 `json:"moduleName"`
+	JobID      string                 `json:"jobID"`
+	Param      map[string]interface{} `json:"param"`
 }
-
 
 func StartJobProcess(ctx context.Context, agentID string) {
 	log.Println("[job]  Start Job Process.")
@@ -43,7 +40,6 @@ func StartJobProcess(ctx context.Context, agentID string) {
 
 	loop(jobChan, resultChan, ctx)
 }
-
 
 func watchResultChan(ctx context.Context) chan map[string]interface{} {
 	resultChan := make(chan map[string]interface{})
@@ -74,7 +70,6 @@ func watchResultChan(ctx context.Context) chan map[string]interface{} {
 
 	return resultChan
 }
-
 
 // start watch job key
 func startWatchJobKey(jobKey string) chan []byte {
@@ -107,8 +102,7 @@ func startWatchJobKey(jobKey string) chan []byte {
 	return jobChan
 }
 
-
-func loop(jobChan chan []byte, resultChan chan map[string]interface{},ctx context.Context) {
+func loop(jobChan chan []byte, resultChan chan map[string]interface{}, ctx context.Context) {
 	// loop fetch job from jobChan
 	for {
 		select {
@@ -123,12 +117,11 @@ func loop(jobChan chan []byte, resultChan chan map[string]interface{},ctx contex
 	}
 }
 
-
-func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
+func callJobModule(_job []byte, resultChan chan map[string]interface{}) {
 	var jobInfo JobInfo
 	err := json.Unmarshal(_job, &jobInfo)
 	if err != nil {
-		log.Printf("[Job]  Job Info Unmarshal error: %s\n",err)
+		log.Printf("[Job]  Job Info Unmarshal error: %s\n", err)
 		return
 	}
 
@@ -143,9 +136,9 @@ func callJobModule(_job  []byte, resultChan chan map[string]interface{}) {
 		resultChan <- result
 	} else {
 		_result := new(bytes.Buffer)
-		fmt.Fprintf(_result,"[Job] JobID: %s; Job module '%s' not found.", jobId, moduleName)
+		fmt.Fprintf(_result, "[Job] JobID: %s; Job module '%s' not found.", jobId, moduleName)
 		result := map[string]interface{}{
-			"JobID": jobId,
+			"JobID":  jobId,
 			"Status": false,
 			"Result": _result.String(),
 		}
